@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-#define QUEUE_FULL 0;
-#define QUEUE_EMPTY INT_MIN;
+#define QUEUE_FULL 0
+#define QUEUE_EMPTY INT_MIN
 
 struct deque {
     int head;
@@ -92,4 +93,9 @@ int deque_remove_last(struct deque * d){
     }
     else
         return QUEUE_EMPTY;
+}
+
+void deque_destroy(struct deque * d){
+    free(d->arrange);
+    free(d);
 }

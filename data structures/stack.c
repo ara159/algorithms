@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#define QUEUE_EMPTY INT_MIN
+#define QUEUE_FULL INT_MAX
 
 struct stack {
     int top;
@@ -20,13 +22,25 @@ int stack_empty(struct stack * s){
     return s->top == -1;
 }
 
-void push(struct stack * s, int x){
-    if(s->top < s->size-1){
+int stack_full(struct stack * s){
+    return s->top == s->size-1;
+}
+
+int stack_top(struct stack * s){
+    if(!stack_empty(s))
+        return s->arrange[s->top];
+    else
+        return QUEUE_EMPTY;
+}
+
+int push(struct stack * s, int x){
+    if(!stack_full(s)){
         s->top++;
         s->arrange[s->top] = x;
+        return 1;
     }
     else{
-        printf("stack overflow\n");
+        return QUEUE_FULL;
     }
 }
 
@@ -37,8 +51,7 @@ int pop(struct stack * s){
         return x;
     }
     else{
-        printf("stack empty\n");
-        return INT_MIN;
+        return QUEUE_EMPTY;
     }
 }
 
