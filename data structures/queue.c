@@ -1,6 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#define QUEUE_EMPTY INT_MIN
+#define QUEUE_FULL 0
 
 struct queue{
     int size;
@@ -27,7 +28,7 @@ int full_queue(struct queue * q){
     return q->length == q->size;
 }
 
-void enqueue(struct queue * q, int x){
+int enqueue(struct queue * q, int x){
     if(!full_queue(q)){
         q->arrange[q->tail] = x;
         q->length++;
@@ -35,10 +36,10 @@ void enqueue(struct queue * q, int x){
             q->tail = 0;
         else
             q->tail++;
+        return 1;
     }
-    else{
-        printf("full queue\n");
-    }
+    else
+        return QUEUE_FULL;
 }
 
 int dequeue(struct queue * q){
@@ -52,8 +53,7 @@ int dequeue(struct queue * q){
         return x;
     }
     else{
-        printf("empty queue\n");
-        return INT_MIN;
+        return QUEUE_EMPTY;
     }
 }
 
