@@ -11,6 +11,12 @@ struct list {
     struct node * head;
 };
 
+struct node * create_node(int k){
+    struct node * n = malloc(sizeof(struct node));
+    n->key = k;
+    return n;
+}
+
 struct list * create_list(void){
     struct list * l = malloc(sizeof(struct list));
     return l;
@@ -31,13 +37,10 @@ int list_empty(struct list * l){
 }
 
 void list_insert(struct list * l, int x){
-    if(list_empty(l)){
-        l->head = malloc(sizeof(struct node));
-        l->head->key = x;
-    }
+    struct node * n = create_node(x);
+    if(list_empty(l))
+        l->head = n;
     else{
-        struct node * n = malloc(sizeof(struct node));
-        n->key = x;
         n->next = l->head;
         l->head = n;
     }
@@ -62,11 +65,12 @@ int _list_delete(struct list * l, struct node * x){
             while(a->next != x){
                 a = a->next;
             }
-            a->next = a->next->next;
+            a->next = x->next;
             free(x);
             return 1;
         }
-    }else
+    }
+    else
         return 0;
 }
 
