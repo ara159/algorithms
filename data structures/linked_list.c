@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <limits.h>
 
+#define LIST_EMPTY INT_MIN
+
 struct node {
     int key;
     struct node * next;
@@ -19,6 +21,7 @@ struct node * create_node(int k){
 
 struct list * create_list(void){
     struct list * l = malloc(sizeof(struct list));
+    l->head = NULL;
     return l;
 }
 
@@ -36,7 +39,7 @@ int list_empty(struct list * l){
     return l->head == NULL;
 }
 
-void list_insert(struct list * l, int x){
+struct node * list_insert(struct list * l, int x){
     struct node * n = create_node(x);
     if(list_empty(l))
         l->head = n;
@@ -44,6 +47,20 @@ void list_insert(struct list * l, int x){
         n->next = l->head;
         l->head = n;
     }
+    return n;
+}
+
+struct node * list_insert_last(struct list * l, int x){
+    struct node * n = create_node(x);
+    if(list_empty(l))
+        l->head = n;
+    else{
+        struct node * a = l->head;
+        while(a->next != NULL)
+            a = a->next;
+        a->next = n;
+    }
+    return n;
 }
 
 struct node * list_search(struct list * l, int k){
@@ -58,7 +75,6 @@ int _list_delete(struct list * l, struct node * x){
     if(!list_empty(l) && x != NULL){
         if(x == l->head){
             l->head = x->next;
-            free(x);
         }
         else{
             struct node * a = l->head;
@@ -66,12 +82,22 @@ int _list_delete(struct list * l, struct node * x){
                 a = a->next;
             }
             a->next = x->next;
-            free(x);
-            return 1;
         }
+        free(x);
+        return 1;
     }
     else
         return 0;
+}
+
+void list_reverse(struct list * l){
+    struct node * p, * a = l->head;
+    while(a != NULL){
+        p = a;
+        a = a->next;
+        list_insert(l, p->key);
+        _list_delete(l, p);
+    }
 }
 
 int list_delete(struct list * l, int k){
