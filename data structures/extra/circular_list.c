@@ -2,20 +2,20 @@
 #include <stdlib.h>
 #include "../doubly_linked_list.c"
 
-struct circular_dlist{
-    struct doubly_node * null;
+struct cdlist{
+    struct dnode * null;
 };
 
-struct circular_dlist * create_circular_dlist(){
-    struct circular_dlist * n = malloc(sizeof(struct circular_dlist));
-    n->null = malloc(sizeof(struct doubly_node));
+struct cdlist * create_cdlist(){
+    struct cdlist * n = malloc(sizeof(struct cdlist));
+    n->null = malloc(sizeof(struct dnode));
     n->null->next = n->null;
     n->null->previus = n->null;
     return n;
 }
 
-void print_cdlist(struct circular_dlist * d){
-    struct doubly_node * a = d->null->next;
+void print_cdlist(struct cdlist * d){
+    struct dnode * a = d->null->next;
     while(a != d->null){
         printf("%d, ", a->key);
         a = a->next;
@@ -23,36 +23,36 @@ void print_cdlist(struct circular_dlist * d){
     printf("\n");
 }
 
-int cdlist_empty(struct circular_dlist * d){
+int cdlist_empty(struct cdlist * d){
     return d->null->next == d->null;
 }
 
-struct doubly_node * cdlist_search(struct circular_dlist * d, int k){
-    struct doubly_node * x = d->null->next;
+struct dnode * cdlist_search(struct cdlist * d, int k){
+    struct dnode * x = d->null->next;
     while(x != d->null && x->key != k)
         x = x->next;
     return x;
 }
 
-void _cdlist_insert(struct circular_dlist * d, struct doubly_node * x){
+void _cdlist_insert(struct cdlist * d, struct dnode * x){
     x->next = d->null->next;
     d->null->next->previus = x;
     d->null->next = x;
     x->previus = d->null;
 }
 
-void cdlist_insert(struct circular_dlist * d, int k){
-    struct doubly_node * x = create_dnode(k);
+void cdlist_insert(struct cdlist * d, int k){
+    struct dnode * x = create_dnode(k);
     _cdlist_insert(d, x);
 }
 
-void _cdlist_delete(struct circular_dlist * c, struct doubly_node * x){
+void _cdlist_delete(struct cdlist * c, struct dnode * x){
     x->previus->next = x->next;
     x->next->previus = x->previus;
 }
 
-int cdlist_delete(struct circular_dlist * d, int x){
-    struct doubly_node * n = cdlist_search(d, x);
+int cdlist_delete(struct cdlist * d, int x){
+    struct dnode * n = cdlist_search(d, x);
     if(n != d->null){
         _cdlist_delete(d, n);
         return 1;
@@ -61,9 +61,19 @@ int cdlist_delete(struct circular_dlist * d, int x){
         return 0;
 }
 
-void destroy_cdlist(struct circular_dlist * d){
-    struct doubly_node * a = d->null->next;
-    struct doubly_node * p;
+// it's destroy the list x, and union is now, list d
+void cdlist_union(struct cdlist * d, struct cdlist * x){
+    d->null->previus->next = x->null->next;
+    x->null->next->previus = d->null->previus;
+    d->null->previus = x->null->previus;
+    x->null->previus->next = d->null;
+    free(x->null);
+    free(x);
+}
+
+void destroy_cdlist(struct cdlist * d){
+    struct dnode * a = d->null->next;
+    struct dnode * p;
     while(a != d->null){
         p = a;
         a = a->next;
